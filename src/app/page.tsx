@@ -3,19 +3,15 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { getStaticAssetUrl } from '@/config/constants'
 
 export default function Home() {
-  const videoUrl = getStaticAssetUrl('/1.mp4');
-  const logoUrl = getStaticAssetUrl('/LIDD2.webp');
-
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6 bg-black overflow-hidden text-white">
 
       {/* VIDEO DE FONDO */}
       <video
         className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-40"
-        src={videoUrl}
+        src="/1.mp4"
         autoPlay
         loop
         muted
@@ -43,7 +39,7 @@ export default function Home() {
           className="relative flex items-center justify-center p-6 w-full md:w-1/3 bg-gradient-to-b from-white/10 to-transparent"
         >
           <Image
-            src={logoUrl}
+            src="/LIDD2.webp"
             alt="Logo"
             width={800}
             height={800}
@@ -60,7 +56,7 @@ export default function Home() {
           className="flex flex-col items-center justify-center p-8 text-center w-full md:w-2/3"
         >
           <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
-            Bienvenido a FaithCore
+            Bienvenido a tu comunidad
           </h1>
           <p className="text-lg sm:text-xl mb-8 text-gray-200 max-w-lg">
             Conecta, comparte y vive experiencias únicas con personas como tú.
