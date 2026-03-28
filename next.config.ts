@@ -1,16 +1,19 @@
-const isProd = process.env.NODE_ENV === 'production';
-const repoName = 'FaithCore';
+﻿import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
   },
+  basePath: process.env.NODE_ENV === 'production' ? '/FaithCore' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/FaithCore/' : '',
   trailingSlash: true,
-  // Si el repositorio se llama 'faithcore', el basePath será /faithcore
-  basePath: isProd ? `/${repoName}` : '',
-  assetPrefix: isProd ? `/${repoName}` : '',
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

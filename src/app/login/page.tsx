@@ -1,71 +1,40 @@
-'use client'; // Indicates this component is a Client Component in Next.js App Router
+'use client';
 
-import { useState, ChangeEvent, FormEvent } from 'react'; // Hooks for managing component state and event types
-import axios from 'axios'; // HTTP client for making backend requests
-import { useRouter } from 'next/navigation'; // Next.js hook for programmatic navigation
-import { motion } from 'framer-motion'; // Import motion for animations
+import { useState, ChangeEvent, FormEvent } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { API_BASE_URL, getStaticAssetUrl } from '@/config/constants';
 
-// --- API URL CONFIGURATION ---
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
-// --- TYPE DEFINITIONS ---
-
-// Interface for the login form state
 interface LoginFormState {
     email: string;
     password: string;
 }
 
-// Interface for the user object received from the login API response
-interface UserResponse {
-    id: string;
-    name: string;
-    email: string;
-    role_id: number; // 1: Admin, 2: Teacher, 3: Student
-    class_group_id?: string | null; // Optional, as not all users might have a class group
-}
-
-/**
- * @function LoginPage
- * @description Page component for user login with a modern, animated design.
- */
 export default function LoginPage() {
     const router = useRouter();
     const [form, setForm] = useState<LoginFormState>({ email: '', password: '' });
     const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
-    // State to control password visibility
     const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
-    /**
-     * @function handleChange
-     * @description Handles changes in form inputs and updates the `form` state.
-     * @param {ChangeEvent<HTMLInputElement>} e - Change event from the input.
-     */
+    const videoUrl = getStaticAssetUrl('/1.mp4');
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    /**
-     * @function togglePasswordVisibility
-     * @description Toggles the password visibility state.
-     */
     const togglePasswordVisibility = () => {
         setPasswordVisible(prev => !prev);
     };
 
-    /**
-     * @function handleSubmit
-     * @description Handles the submission of the login form.
-     * @param {FormEvent} e - Form submission event.
-     */
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
         try {
-            const res = await axios.post<{ token: string; user: UserResponse }>(`${API_BASE_URL}/auth/login`, form);
+            const res = await axios.post<{ token: string; user: any }>(`${API_BASE_URL}/auth/login`, form);
 
             const { token, user } = res.data;
 
@@ -74,37 +43,25 @@ export default function LoginPage() {
                 localStorage.setItem('userId', user.id);
                 localStorage.setItem('userName', user.name);
                 localStorage.setItem('userEmail', user.email);
-                localStorage.setItem('role', String(user.role_id)); // Store role_id as a string if needed elsewhere
+                localStorage.setItem('role', String(user.role_id));
 
                 let roleString: string;
                 switch (user.role_id) {
-                    case 1:
-                        roleString = 'admin';
-                        break;
-                    case 2:
-                        roleString = 'teacher';
-                        break;
-                    case 3:
-                        roleString = 'student';
-                        break;
-                    case 4: // Assuming role 4 is also 'student' or 'user' based on your AdminPanel.tsx
-                        roleString = 'user';
-                        break;
-                    default:
-                        roleString = 'user'; // Default role if not 1, 2, 3, or 4
+                    case 1: roleString = 'admin'; break;
+                    case 2: roleString = 'teacher'; break;
+                    case 3: roleString = 'manager'; break;
+                    default: roleString = 'user';
                 }
                 localStorage.setItem('userRole', roleString);
 
                 if (user.class_group_id) {
                     localStorage.setItem('userClassGroupId', user.class_group_id);
-                } else {
-                    localStorage.removeItem('userClassGroupId');
                 }
             }
 
             router.push('/dashboard');
 
-        } catch (err: any) { // Use 'any' for err if its type is not strictly known, or define a more specific error interface
+        } catch (err: any) {
             console.error('Login error:', err.response?.data || err.message);
             setError(err.response?.data?.message || 'Error al iniciar sesión. Por favor, revisa tus credenciales.');
         } finally {
@@ -114,27 +71,20 @@ export default function LoginPage() {
 
     return (
         <div className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden p-4">
-            {/* Video de fondo */}
-            {/* Ensure '1.mp4' is in your public directory or provide a valid URL */}
             <video
                 className="absolute top-0 left-0 w-full h-full object-cover opacity-40"
-                src="/1.mp4"
+                src={videoUrl}
                 autoPlay
                 loop
                 muted
                 playsInline
-                onError={(e) => console.error("Error loading video:", e.currentTarget.error)}
-            >
-                Tu navegador no soporta el elemento de video.
-            </video>
+            />
 
-            {/* Luces neón animadas */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute w-[500px] h-[500px] bg-purple-500/30 rounded-full blur-[150px] animate-pulse top-[-150px] left-[-150px]" />
                 <div className="absolute w-[400px] h-[400px] bg-blue-500/30 rounded-full blur-[150px] animate-ping bottom-[-100px] right-[-100px]" />
             </div>
 
-            {/* Card con glassmorphism */}
             <motion.div
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -155,7 +105,6 @@ export default function LoginPage() {
                 )}
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-                    {/* Email Input */}
                     <div className="relative group">
                         <input
                             type="email"
@@ -168,7 +117,6 @@ export default function LoginPage() {
                         />
                     </div>
 
-                    {/* Password Input */}
                     <div className="relative group">
                         <input
                             type={passwordVisible ? 'text' : 'password'}
@@ -194,13 +142,12 @@ export default function LoginPage() {
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.577 3.01 9.964 7.173a1.012 1.012 0 0 1 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.577-3.01-9.964-7.173Z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6L6 18"/>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6L6 18" />
                                 </svg>
                             )}
                         </button>
                     </div>
 
-                    {/* Submit Button */}
                     <motion.button
                         whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(0,255,255,0.8)' }}
                         whileTap={{ scale: 0.95 }}

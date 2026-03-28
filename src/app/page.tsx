@@ -3,18 +3,19 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-
-// Obtener el basePath para GitHub Pages
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+import { getStaticAssetUrl } from '@/config/constants'
 
 export default function Home() {
+  const videoUrl = getStaticAssetUrl('/1.mp4');
+  const logoUrl = getStaticAssetUrl('/LIDD2.webp');
+
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6 bg-black overflow-hidden text-white">
 
       {/* VIDEO DE FONDO */}
       <video
         className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-40"
-        src={`${basePath}/1.mp4`}
+        src={videoUrl}
         autoPlay
         loop
         muted
@@ -42,7 +43,7 @@ export default function Home() {
           className="relative flex items-center justify-center p-6 w-full md:w-1/3 bg-gradient-to-b from-white/10 to-transparent"
         >
           <Image
-            src={`${basePath}/LIDD2.webp`}
+            src={logoUrl}
             alt="Logo"
             width={800}
             height={800}

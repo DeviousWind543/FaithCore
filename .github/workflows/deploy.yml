@@ -1,8 +1,8 @@
-name: Deploy Next.js site to Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["gh-pages"]  # o "main" según lo que uses
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -24,21 +24,29 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: npm
+          node-version: 20
+          cache: 'npm'
       
       - name: Install dependencies
         run: npm ci
       
-      - name: Build with Next.js
+      - name: Build
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_SOCKET_URL: ${{ secrets.NEXT_PUBLIC_SOCKET_URL }}
+          NEXT_PUBLIC_BASE_PATH: /FaithCore
+      
+      - name: Add .nojekyll
+        run: touch out/.nojekyll
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: './out'
 
   deploy:
     environment:
