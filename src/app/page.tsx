@@ -39,7 +39,7 @@ export default function Home() {
           className="relative flex items-center justify-center p-6 w-full md:w-1/3 bg-gradient-to-b from-white/10 to-transparent"
         >
           <Image
-            src="/LIDD2.webp"
+            src="/Logo FAITHCORE 2026.png"
             alt="Logo"
             width={800}
             height={800}
