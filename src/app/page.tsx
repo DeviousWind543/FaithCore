@@ -43,7 +43,7 @@ export default function Home() {
             alt="Logo"
             width={800}
             height={800}
-            className="w-full h-auto object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]"
+            className="w-full h-auto object-contain drop-shadow-[0_0_50px_rgba(255,255,255,0.8)]"
             priority
           />
         </motion.div>
